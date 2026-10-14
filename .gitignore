@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Data (downloaded automatically by the notebook)
+spam.csv
+
+# OS / editor
+.DS_Store
+.vscode/

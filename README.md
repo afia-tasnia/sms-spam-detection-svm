@@ -1,81 +1,87 @@
-# SMS Spam Classification using SVM
+# 📱 SMS Spam Detection using SVM
 
-A machine learning project that classifies SMS messages as **Spam** or **Ham** (normal messages) using a **Support Vector Machine (SVM)** classifier, with comparison against Naive Bayes and Logistic Regression.
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/afia-tasnia/sms-spam-detection-svm/blob/main/SMS_Spam_SVM_final.ipynb)
 
-## Overview
+Classifies SMS messages as **spam** or **ham** (normal) using TF-IDF features and a **Linear Support Vector Machine**.
+Started from a lab notebook (baseline SVM) and extended with better features, deeper evaluation, model explanation and a small demo app.
 
-SMS spam is a common problem, and automatically filtering it out requires a model that can understand text patterns. This project builds a full text-classification pipeline: cleaning raw SMS text, converting it into numerical features with TF-IDF, and training a **LinearSVC (SVM)** model to detect spam.
+## 🔑 Key results
 
-## Dataset
+Dataset: [SMS Spam Collection](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) - 5,572 messages, 5,169 after removing 403 duplicates (12.6% spam).
 
-- **Source:** [SMS Spam Collection Dataset](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) (Kaggle)
-- **Size:** 5,572 SMS messages labeled as `spam` or `ham`
-- **Format:** CSV file with two relevant columns — message label and message text
+**Feature experiments** - repeated 5-fold cross-validation (5 folds x 3 repeats), mean scores on the spam class:
 
-## Project Workflow
-
-1. **Data Loading & Cleaning** — Load `spam.csv`, drop unnecessary columns, check for nulls/duplicates
-2. **Exploratory Data Analysis (EDA)** — Class distribution, message length analysis, word clouds
-3. **Text Preprocessing** — Lowercasing, removing URLs/emails/numbers/punctuation, stopword removal, lemmatization
-4. **Train/Test Split** — 80/20 split
-5. **Model Training** — TF-IDF vectorization + LinearSVC pipeline
-6. **Evaluation** — Accuracy, Precision, Recall, F1-score, Confusion Matrix, ROC Curve
-7. **Model Comparison** — SVM vs Naive Bayes vs Logistic Regression
-8. **Hyperparameter Tuning** — GridSearchCV to find the best `C` value
-9. **Cross Validation** — 5-fold CV to check model stability
-10. **Error Analysis** — Inspecting misclassified messages
-11. **Model Saving** — Trained model exported with `joblib` for reuse
-12. **Prediction Function** — Simple function to classify a new SMS message
-
-## Results
-
-| Model | Accuracy | Precision | Recall | F1-Score |
+| Approach | Accuracy | Precision | Recall | F1 |
 |---|---|---|---|---|
-| SVM (LinearSVC) | *fill in after running* | | | |
-| Naive Bayes | *fill in after running* | | | |
-| Logistic Regression | *fill in after running* | | | |
+| A. Baseline: cleaned text, word 1-2 grams | 0.9814 | 0.9761 | 0.8744 | 0.9223 |
+| B. Raw text, character 2-5 grams | 0.9901 | 0.9952 | 0.9265 | 0.9594 |
+| C. Char grams + handcrafted features (length, digits, caps...) | 0.9890 | 0.9808 | 0.9316 | 0.9554 |
+| **D. Raw text, char + word grams (final model)** | **0.9912** | 0.9936 | **0.9367** | **0.9642** |
 
-> Run the notebook and paste your actual results here — this shows the reader real evidence instead of placeholder text.
+**Held-out test set** (1,034 messages, 131 spam; split 80/20, `random_state=42`):
 
-## Tech Stack
+| Model | Accuracy | Precision | Recall | F1 |
+|---|---|---|---|---|
+| Baseline SVM (tuned) | 0.9797 | 0.9435 | 0.8931 | 0.9176 |
+| **Improved SVM (char + word)** | **0.9913** | **1.0000** | **0.9313** | **0.9644** |
 
-- Python 3
-- pandas, numpy
-- scikit-learn (TF-IDF, LinearSVC, GridSearchCV)
-- nltk (stopwords, lemmatization)
-- matplotlib, seaborn, wordcloud (visualization)
-- joblib (model persistence)
+> Note: the test set has only 131 spam messages, so single-split numbers are noisy (1 message ~ 0.8% recall). The cross-validation table is the stronger evidence. Idea C (handcrafted features) did **not** improve over B/D and was dropped.
 
-## How to Run
+![Feature experiments](images/feature_experiments.png)
+![Confusion matrices](images/confusion_matrix_compare.png)
 
-1. Clone this repository
-   ```bash
-   git clone <your-repo-url>
-   cd <your-repo-folder>
-   ```
-2. Install dependencies
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Download `spam.csv` from the [Kaggle dataset link](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) and place it in the project folder
-4. Open and run `SMS_Spam_SVM_refined.ipynb` in Jupyter Notebook, JupyterLab, or Google Colab
+## 🧠 What was done
 
-## Project Structure
+| Step | Details |
+|---|---|
+| Data checks | label balance, 403 duplicates removed **before** splitting (avoids test leakage) |
+| EDA | class balance, message length, word clouds |
+| Preprocessing (baseline) | lowercase, remove URLs/emails/numbers/punctuation, stopwords, lemmatization |
+| Models compared | Naive Bayes, Logistic Regression, **Linear SVM** (best recall/F1) |
+| Tuning | `GridSearchCV` over `C`, 5-fold CV, scored on **F1** (data is imbalanced) |
+| Evaluation | confusion matrix, ROC, Precision-Recall curve, repeated CV |
+| **Improvement** | TF-IDF on **raw text** with **character + word n-grams** (keeps signals like `£`, `150p`, `txt`, capitals) |
+| Threshold analysis | precision/recall trade-off chosen from cross-validated train scores only |
+| Explainability | most spam-/ham-indicating words from SVM weights |
+| Error analysis | reads misclassified original messages |
+| Deployment | saved model (`joblib`), `predict_sms()` with confidence score, Streamlit demo |
 
+![Top words](images/top_words.png)
+
+## 🚀 How to run
+
+**Option 1 - Google Colab (easiest):** click the Colab badge above, then *Runtime -> Run all*. The dataset downloads automatically.
+
+**Option 2 - locally:**
+```bash
+git clone https://github.com/afia-tasnia/sms-spam-detection-svm.git
+cd sms-spam-detection-svm
+pip install -r requirements.txt
+jupyter notebook SMS_Spam_SVM_final.ipynb      # then Run all
 ```
-├── SMS_Spam_SVM_refined.ipynb   # Main notebook
-├── spam.csv                     # Dataset (not included — download separately)
-├── sms_spam_svm_model.pkl       # Saved trained model (generated after running)
-├── requirements.txt             # Python dependencies
-└── README.md                    # Project documentation
+If the automatic download fails, download `spam.csv` from [Kaggle](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) and place it next to the notebook.
+
+**Demo app:**
+```bash
+pip install streamlit
+streamlit run app.py
 ```
 
-## Author
+## 📁 Repository structure
+```
+├── SMS_Spam_SVM_final.ipynb   # full notebook with outputs
+├── app.py                     # Streamlit demo
+├── models/sms_spam_svm_model.pkl   # trained pipeline (TF-IDF + SVM)
+├── images/                    # figures + result tables (generated by the notebook)
+├── requirements.txt
+└── README.md
+```
 
-**Afia Tasnia**
-Bangladesh University of Professionals
-Artificial Intelligence Laboratory
+## ⚠️ Limitations
+* Small, old (~2005) dataset of mostly British/Singaporean English SMS - modern spam looks different.
+* Bag-of-words ignores meaning; most remaining misses are short promo-style texts (e.g. ringtone codes, "missed call" alerts).
+* The saved `.pkl` is tied to the scikit-learn version used to train it; re-run the notebook if loading fails.
+* Possible next steps: transformer model (DistilBERT), calibrated probabilities, more recent data.
 
-## Acknowledgements
-
-Dataset originally compiled by the UCI Machine Learning Repository, sourced via Kaggle.
+## 📚 Dataset
+UCI SMS Spam Collection (Almeida & Hidalgo). Used for educational purposes.

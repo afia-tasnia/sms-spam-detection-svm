@@ -1,0 +1,4 @@
+Model,Accuracy,Precision,Recall,F1
+Baseline SVM (tuned),0.9797,0.9435,0.8931,0.9176
+Improved SVM (char+word),0.9913,1.0,0.9313,0.9644
+Improved + strict threshold,0.9894,1.0,0.916,0.9562

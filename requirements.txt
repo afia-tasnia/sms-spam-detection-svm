@@ -1,8 +1,10 @@
 pandas
 numpy
+scipy
 scikit-learn
 nltk
 matplotlib
 seaborn
 wordcloud
 joblib
+jupyter
