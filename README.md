@@ -1,11 +1,11 @@
-# 📱 SMS Spam Detection using SVM
+# SMS Spam Detection using SVM
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/afia-tasnia/sms-spam-detection-svm/blob/main/SMS_Spam_SVM_final.ipynb)
 
 Classifies SMS messages as **spam** or **ham** (normal) using TF-IDF features and a **Linear Support Vector Machine**.
 Started from a lab notebook (baseline SVM) and extended with better features, deeper evaluation, model explanation and a small demo app.
 
-## 🔑 Key results
+## Key results
 
 Dataset: [SMS Spam Collection](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) - 5,572 messages, 5,169 after removing 403 duplicates (12.6% spam).
 
@@ -30,7 +30,7 @@ Dataset: [SMS Spam Collection](https://www.kaggle.com/datasets/uciml/sms-spam-co
 ![Feature experiments](images/feature_experiments.png)
 ![Confusion matrices](images/confusion_matrix_compare.png)
 
-## 🧠 What was done
+## What was done
 
 | Step | Details |
 |---|---|
@@ -48,7 +48,7 @@ Dataset: [SMS Spam Collection](https://www.kaggle.com/datasets/uciml/sms-spam-co
 
 ![Top words](images/top_words.png)
 
-## 🚀 How to run
+## How to run
 
 **Option 1 - Google Colab (easiest):** click the Colab badge above, then *Runtime -> Run all*. The dataset downloads automatically.
 
@@ -67,7 +67,7 @@ pip install streamlit
 streamlit run app.py
 ```
 
-## 📁 Repository structure
+## Repository structure
 ```
 ├── SMS_Spam_SVM_final.ipynb   # full notebook with outputs
 ├── app.py                     # Streamlit demo
@@ -77,11 +77,11 @@ streamlit run app.py
 └── README.md
 ```
 
-## ⚠️ Limitations
+## Limitations
 * Small, old (~2005) dataset of mostly British/Singaporean English SMS - modern spam looks different.
 * Bag-of-words ignores meaning; most remaining misses are short promo-style texts (e.g. ringtone codes, "missed call" alerts).
 * The saved `.pkl` is tied to the scikit-learn version used to train it; re-run the notebook if loading fails.
 * Possible next steps: transformer model (DistilBERT), calibrated probabilities, more recent data.
 
-## 📚 Dataset
+## Dataset
 UCI SMS Spam Collection (Almeida & Hidalgo). Used for educational purposes.
